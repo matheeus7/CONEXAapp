@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/casca :: casca(${tarefa != null} ? 'Editar tarefa' : 'Nova tarefa', 'areas', ~{::conteudo})}">
+<body>
+<main class="principal" id="conteudo" tabindex="-1" th:fragment="conteudo">
+  <div class="cabeca">
+    <div>
+      <h1 id="titulo-pagina" th:text="${tarefa != null} ? 'Editar tarefa' : 'Nova tarefa'">Nova tarefa</h1>
+      <p>Área: <a th:href="@{/areas/{id}(id=${area.id})}" th:text="${area.nome}">Faculdade</a></p>
+    </div>
+  </div>
+  <section class="painel">
+    <div class="painel-corpo">
+      <form th:action="${tarefa != null} ? @{/tarefas/{id}(id=${tarefa.id})} : @{/areas/{id}/tarefas(id=${area.id})}"
+            th:object="${tarefaForm}" method="post" novalidate>
+        <p class="erro" th:if="${#fields.hasGlobalErrors()}" th:each="e : ${#fields.globalErrors()}" th:text="${e}">Erro</p>
+        <div class="campo">
+          <label for="titulo">Título</label>
+          <input type="text" id="titulo" th:field="*{titulo}" maxlength="120" required autofocus
+                 th:attr="aria-invalid=${#fields.hasErrors('titulo')} ? 'true', aria-describedby=${#fields.hasErrors('titulo')} ? 'erro-titulo'">
+          <p class="erro" id="erro-titulo" th:if="${#fields.hasErrors('titulo')}" th:errors="*{titulo}">Erro</p>
+        </div>
+        <div class="campo">
+          <label for="descricao">Descrição (opcional)</label>
+          <textarea id="descricao" th:field="*{descricao}" rows="3" maxlength="1000"></textarea>
+          <p class="erro" th:if="${#fields.hasErrors('descricao')}" th:errors="*{descricao}">Erro</p>
+        </div>
+        <div class="campo">
+          <label for="prazo">Prazo</label>
+          <input type="datetime-local" id="prazo" th:field="*{prazo}" required
+                 th:attr="aria-invalid=${#fields.hasErrors('prazo')} ? 'true', aria-describedby=${#fields.hasErrors('prazo')} ? 'erro-prazo'">
+          <p class="erro" id="erro-prazo" th:if="${#fields.hasErrors('prazo')}" th:errors="*{prazo}">Erro</p>
+        </div>
+        <div class="campo">
+          <label for="prioridade">Prioridade</label>
+          <select id="prioridade" th:field="*{prioridade}">
+            <option th:each="p : ${prioridades}" th:value="${p}" th:text="${p.rotulo}">Média</option>
+          </select>
+        </div>
+        <p class="fraco" style="margin-bottom:14px" th:if="${tarefa == null}">O responsável será você, dono da Área.</p>
+        <div class="acoes">
+          <button class="btn primario" type="submit" data-ocupado="Salvando…">Salvar</button>
+          <a class="btn" th:href="@{/areas/{id}(id=${area.id})}">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/casca :: casca(${area.nome}, 'areas', ~{::conteudo})}">
+<body>
+<main class="principal" id="conteudo" tabindex="-1" th:fragment="conteudo">
+  <div class="cabeca">
+    <div>
+      <h1 id="titulo-pagina" th:text="${area.nome}">Faculdade</h1>
+      <p><a th:href="@{/areas}">← Minha Vida</a></p>
+    </div>
+    <div class="acoes">
+      <a class="btn" th:href="@{/areas/{id}/editar(id=${area.id})}">Renomear</a>
+      <a class="btn perigo" th:href="@{/areas/{id}/excluir(id=${area.id})}">Excluir</a>
+    </div>
+  </div>
+  <section class="painel" aria-labelledby="tarefas-titulo">
+    <div class="painel-cab">
+      <h2 id="tarefas-titulo">Tarefas</h2>
+      <a class="btn primario pequeno" th:href="@{/areas/{id}/tarefas/nova(id=${area.id})}"><svg class="icone" aria-hidden="true"><use href="#i-mais"/></svg>Nova tarefa</a>
+    </div>
+    <ul class="itens" th:if="${!tarefas.isEmpty()}">
+      <li th:each="t : ${tarefas}" th:classappend="${t.concluida()} ? 'feita' : (${t.atrasada} ? 'atrasada')">
+        <form th:if="${!t.concluida()}" th:action="@{/tarefas/{id}/concluir(id=${t.id})}" method="post">
+          <button type="submit" class="marca-check" th:attr="aria-label='Concluir tarefa ' + ${t.titulo}"></button>
+        </form>
+        <svg th:if="${t.concluida()}" class="icone" aria-hidden="true"><use href="#i-ok"/></svg>
+        <div class="corpo">
+          <div class="titulo" th:text="${t.titulo}">Entregar trabalho</div>
+          <div class="meta">
+            <span th:text="${#temporals.format(t.prazo, 'dd/MM/yyyy HH:mm')}">29/10/2026 18:00</span>
+            <span class="selo atraso" th:if="${t.atrasada}">Atrasada</span>
+            <span class="selo ok" th:if="${t.concluida()}">Concluída</span>
+            <span class="selo" th:classappend="${#strings.toLowerCase(t.prioridade.name())}" th:text="${t.prioridade.rotulo}">Média</span>
+          </div>
+        </div>
+        <div class="lado">
+          <a class="btn fantasma pequeno" th:href="@{/tarefas/{id}/editar(id=${t.id})}">Editar</a>
+          <form th:action="@{/tarefas/{id}/excluir(id=${t.id})}" method="post">
+            <button type="submit" class="btn fantasma pequeno perigo">Excluir</button>
+          </form>
+        </div>
+      </li>
+    </ul>
+    <p class="vazio-lista" th:if="${tarefas.isEmpty()}">Nenhuma tarefa nesta Área ainda.</p>
+  </section>
+</main>
+</body>
+</html>

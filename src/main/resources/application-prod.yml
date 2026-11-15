@@ -1,0 +1,9 @@
+# Produção: exige HTTPS (RNF02) e confia nos cabeçalhos do proxy reverso que termina o TLS.
+server:
+  forward-headers-strategy: framework
+  servlet:
+    session:
+      cookie:
+        secure: true
+conexa:
+  exigir-https: true

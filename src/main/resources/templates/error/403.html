@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head th:replace="~{fragments/comum :: cabeca('Acesso negado')}"></head>
+<body>
+  <th:block th:replace="~{fragments/icones :: sprite}"></th:block>
+  <main class="auth-form" style="min-height:100vh" id="conteudo">
+    <div class="caixa vazio" style="padding:0">
+      <svg class="icone icone-grande" aria-hidden="true"><use href="#i-alerta"/></svg>
+      <h1 style="font-size:1.5rem">Acesso negado</h1>
+      <p>Você não tem permissão para ver esta página.</p>
+      <a class="btn primario" th:href="@{/}">Voltar ao início</a>
+    </div>
+  </main>
+</body>
+</html>

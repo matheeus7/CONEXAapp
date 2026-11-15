@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/publica :: publica('Entrar', ~{::conteudo})}">
+<body>
+<main class="auth-form" id="conteudo" tabindex="-1" th:fragment="conteudo">
+  <div class="caixa">
+    <h2>Entrar</h2>
+    <p class="suave" style="margin-bottom:20px">Acesse sua Minha Vida.</p>
+    <div class="alerta erro" role="alert" th:if="${param.erro}">
+      <svg class="icone" aria-hidden="true"><use href="#i-alerta"/></svg>E-mail ou senha incorretos.
+    </div>
+    <div class="alerta info" role="status" th:if="${param.saiu}">
+      <svg class="icone" aria-hidden="true"><use href="#i-ok"/></svg>Você saiu da sua conta.
+    </div>
+    <form th:action="@{/entrar}" method="post" novalidate>
+      <div class="campo">
+        <label for="email">E-mail</label>
+        <input type="email" id="email" name="email" autocomplete="email" required autofocus>
+      </div>
+      <div class="campo">
+        <label for="senha">Senha</label>
+        <input type="password" id="senha" name="senha" autocomplete="current-password" required>
+      </div>
+      <button class="btn primario" type="submit" style="width:100%" data-ocupado="Entrando…">Entrar</button>
+    </form>
+    <p class="auth-troca">Ainda não tem conta? <a th:href="@{/cadastro}">Criar conta</a></p>
+  </div>
+</main>
+</body>
+</html>
