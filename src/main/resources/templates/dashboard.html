@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/casca :: casca('Dashboard', 'dashboard', ~{::conteudo})}">
+<body>
+<main class="principal" id="conteudo" tabindex="-1" th:fragment="conteudo">
+  <div class="cabeca saudacao">
+    <div>
+      <h1 id="titulo-pagina"><span th:text="${saudacao}">Bom dia</span>, <span th:text="${primeiroNome}">Ana</span></h1>
+      <p th:text="${dataLonga}">Quinta-feira, 29 de outubro</p>
+    </div>
+  </div>
+  <div class="grade dois">
+    <section class="painel" aria-labelledby="atrasadas-titulo">
+      <div class="painel-cab"><h2 id="atrasadas-titulo">Atrasadas</h2></div>
+      <ul class="itens" th:if="${!atrasadas.isEmpty()}">
+        <li class="atrasada" th:each="t : ${atrasadas}">
+          <div class="corpo">
+            <a class="titulo" th:href="@{/areas/{id}(id=${t.areaId})}" th:text="${t.titulo}">Tarefa</a>
+            <div class="meta"><span th:text="${#temporals.format(t.prazo, 'dd/MM/yyyy HH:mm')}">29/10/2026</span><span class="selo atraso">Atrasada</span></div>
+          </div>
+        </li>
+      </ul>
+      <p class="vazio-lista" th:if="${atrasadas.isEmpty()}">Nenhuma tarefa atrasada.</p>
+    </section>
+    <section class="painel" aria-labelledby="proximas-titulo">
+      <div class="painel-cab"><h2 id="proximas-titulo">Próximos 7 dias</h2></div>
+      <ul class="itens" th:if="${!proximas.isEmpty()}">
+        <li th:each="t : ${proximas}">
+          <div class="corpo">
+            <a class="titulo" th:href="@{/areas/{id}(id=${t.areaId})}" th:text="${t.titulo}">Tarefa</a>
+            <div class="meta"><span th:text="${#temporals.format(t.prazo, 'dd/MM/yyyy HH:mm')}">29/10/2026</span></div>
+          </div>
+        </li>
+      </ul>
+      <p class="vazio-lista" th:if="${proximas.isEmpty()}">Nada com prazo nos próximos 7 dias. <a th:href="@{/areas}">Ver Minha Vida</a></p>
+    </section>
+  </div>
+</main>
+</body>
+</html>

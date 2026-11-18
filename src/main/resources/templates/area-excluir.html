@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/casca :: casca('Excluir Área', 'areas', ~{::conteudo})}">
+<body>
+<main class="principal" id="conteudo" tabindex="-1" th:fragment="conteudo">
+  <div class="cabeca">
+    <div>
+      <h1 id="titulo-pagina">Excluir “<span th:text="${area.nome}">Faculdade</span>”?</h1>
+    </div>
+  </div>
+  <section class="painel">
+    <div class="painel-corpo">
+      <p>Tudo o que pertence a esta Área será removido:</p>
+      <ul style="margin:8px 0 0 20px">
+        <li><strong th:text="${qtdTarefas}">0</strong> <span th:text="${qtdTarefas == 1} ? 'tarefa' : 'tarefas'">tarefas</span></li>
+        <li><strong th:text="${qtdEventos}">0</strong> <span th:text="${qtdEventos == 1} ? 'evento' : 'eventos'">eventos</span></li>
+        <li>conexões da Área, quando existirem</li>
+      </ul>
+      <p class="fraco" style="margin-top:8px">Esta ação não pode ser desfeita.</p>
+      <div class="acoes" style="margin-top:16px">
+        <form th:action="@{/areas/{id}/excluir(id=${area.id})}" method="post">
+          <button class="btn perigo cheio" type="submit">Excluir Área</button>
+        </form>
+        <a class="btn" th:href="@{/areas/{id}(id=${area.id})}">Cancelar</a>
+      </div>
+    </div>
+  </section>
+</main>
+</body>
+</html>

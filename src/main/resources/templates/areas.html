@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/casca :: casca('Minha Vida', 'areas', ~{::conteudo})}">
+<body>
+<main class="principal" id="conteudo" tabindex="-1" th:fragment="conteudo">
+  <div class="cabeca">
+    <div>
+      <h1 id="titulo-pagina">Minha Vida</h1>
+      <p>Suas Áreas são privadas até você conectar alguém.</p>
+    </div>
+    <a class="btn primario" th:href="@{/areas/nova}"><svg class="icone" aria-hidden="true"><use href="#i-mais"/></svg>Nova Área</a>
+  </div>
+  <section class="painel" aria-labelledby="titulo-pagina">
+    <ul class="lista-areas" th:if="${!areas.isEmpty()}">
+      <li th:each="a : ${areas}">
+        <a th:href="@{/areas/{id}(id=${a.id})}">
+          <svg class="icone" aria-hidden="true"><use href="#i-pasta"/></svg>
+          <span th:text="${a.nome}">Faculdade</span>
+        </a>
+      </li>
+    </ul>
+    <div class="vazio" th:if="${areas.isEmpty()}">
+      <svg class="icone icone-grande" aria-hidden="true"><use href="#i-pasta"/></svg>
+      <h3>Nenhuma Área ainda</h3>
+      <p>Crie sua primeira Área, como Faculdade, Trabalho ou Casa.</p>
+      <a class="btn primario" th:href="@{/areas/nova}">Criar Área</a>
+    </div>
+  </section>
+  <section class="painel" aria-labelledby="comp-titulo" style="margin-top:20px">
+    <div class="painel-cab"><h2 id="comp-titulo">Compartilhadas comigo</h2></div>
+    <ul class="lista-areas" th:if="${!compartilhadas.isEmpty()}">
+      <li th:each="a : ${compartilhadas}">
+        <a th:href="@{/areas/{id}(id=${a.id})}">
+          <svg class="icone" aria-hidden="true"><use href="#i-pessoas"/></svg>
+          <span><span th:text="${a.nome}">Faculdade</span> <span class="fraco" th:text="'· de ' + ${a.donoNome}">· de Ana</span></span>
+        </a>
+      </li>
+    </ul>
+    <p class="vazio-lista" th:if="${compartilhadas.isEmpty()}">Nenhuma Área foi compartilhada com você.</p>
+  </section>
+</main>
+</body>
+</html>

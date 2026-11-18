@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: conexa
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/conexa}
+    username: ${DB_USUARIO:conexa}
+    password: ${DB_SENHA:conexa}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
+  thymeleaf:
+    cache: true
+  messages:
+    basename: messages
+  web:
+    locale: pt_BR
+
+server:
+  servlet:
+    session:
+      timeout: 30m
+      cookie:
+        http-only: true
+        same-site: lax
+  error:
+    include-message: never
+    include-stacktrace: never
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+conexa:
+  fuso-horario: America/Manaus
+  exigir-https: false
+
+logging:
+  level:
+    root: INFO
+    br.conexa: INFO

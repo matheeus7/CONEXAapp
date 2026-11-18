@@ -1,0 +1,3 @@
+# Desenvolvimento com Docker Compose: HTTP simples, sem exigir HTTPS.
+conexa:
+  exigir-https: false

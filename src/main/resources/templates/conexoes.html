@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/casca :: casca('Conexões', 'areas', ~{::conteudo})}">
+<body>
+<main class="principal" id="conteudo" tabindex="-1" th:fragment="conteudo">
+  <div class="cabeca">
+    <div>
+      <h1 id="titulo-pagina">Conexões de “<span th:text="${area.nome}">Faculdade</span>”</h1>
+      <p><a th:href="@{/areas/{id}(id=${area.id})}">← Voltar à Área</a></p>
+    </div>
+  </div>
+  <div class="grade dois">
+    <section class="painel" aria-labelledby="lista-titulo">
+      <div class="painel-cab"><h2 id="lista-titulo">Pessoas conectadas</h2></div>
+      <ul class="itens" th:if="${!conexoes.isEmpty()}">
+        <li th:each="c : ${conexoes}">
+          <div class="corpo">
+            <div class="titulo" th:text="${c.nome}">Bruno Lima</div>
+            <div class="meta">
+              <span th:text="${c.email}">bruno@exemplo.com</span>
+              <span class="selo" th:classappend="${c.nivel.name() == 'COLABORADOR'} ? 'acao'" th:text="${c.nivel.rotulo}">Visualizador</span>
+            </div>
+            <form class="acoes" style="margin-top:8px" th:action="@{/conexoes/{id}/nivel(id=${c.id})}" method="post">
+              <label class="sr-only" th:for="'nivel-' + ${c.id}">Nível de acesso de <span th:text="${c.nome}"></span></label>
+              <select name="nivel" th:id="'nivel-' + ${c.id}" style="width:auto">
+                <option th:each="n : ${niveis}" th:value="${n}" th:text="${n.rotulo}" th:selected="${n == c.nivel}">Visualizador</option>
+              </select>
+              <button class="btn pequeno" type="submit">Alterar nível</button>
+            </form>
+          </div>
+          <div class="lado">
+            <form th:action="@{/conexoes/{id}/revogar(id=${c.id})}" method="post">
+              <button class="btn fantasma pequeno perigo" type="submit">Revogar acesso</button>
+            </form>
+          </div>
+        </li>
+      </ul>
+      <p class="vazio-lista" th:if="${conexoes.isEmpty()}">Esta Área é só sua. Ninguém está conectado.</p>
+    </section>
+    <section class="painel" aria-labelledby="nova-titulo">
+      <div class="painel-cab"><h2 id="nova-titulo">Conectar uma pessoa</h2></div>
+      <div class="painel-corpo">
+        <form th:action="@{/areas/{id}/conexoes(id=${area.id})}" th:object="${conexaoForm}" method="post" novalidate>
+          <div class="campo">
+            <label for="email">E-mail da pessoa</label>
+            <input type="email" id="email" th:field="*{email}" autocomplete="off" required
+                   th:attr="aria-invalid=${#fields.hasErrors('email')} ? 'true', aria-describedby=${#fields.hasErrors('email')} ? 'erro-email' : 'ajuda-email'">
+            <span class="ajuda" id="ajuda-email">A pessoa precisa ter uma conta no CONEXA. Ela só verá esta Área.</span>
+            <p class="erro" id="erro-email" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Erro</p>
+          </div>
+          <div class="campo">
+            <label for="nivel">Nível de acesso</label>
+            <select id="nivel" th:field="*{nivel}">
+              <option th:each="n : ${niveis}" th:value="${n}" th:text="${n.rotulo}">Visualizador</option>
+            </select>
+            <span class="ajuda">Visualizador apenas vê. Colaborador também cria, edita, conclui e exclui tarefas e eventos.</span>
+          </div>
+          <button class="btn primario" type="submit" data-ocupado="Conectando…">Conectar</button>
+        </form>
+      </div>
+    </section>
+  </div>
+</main>
+</body>
+</html>
