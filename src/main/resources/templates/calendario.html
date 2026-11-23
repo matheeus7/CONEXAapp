@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/casca :: casca('Calendário', 'calendario', ~{::conteudo})}">
+<body>
+<main class="principal" id="conteudo" tabindex="-1" th:fragment="conteudo">
+  <div class="cabeca">
+    <div>
+      <h1 id="titulo-pagina">Calendário</h1>
+      <p>Eventos de todas as suas Áreas.</p>
+    </div>
+    <a class="btn primario" th:href="@{/eventos/novo}"><svg class="icone" aria-hidden="true"><use href="#i-mais"/></svg>Novo evento</a>
+  </div>
+
+  <section class="painel" aria-labelledby="mes-titulo">
+    <div class="painel-cab">
+      <a class="btn pequeno" th:href="@{/calendario(mes=${mesAnterior})}" aria-label="Mês anterior">‹ Anterior</a>
+      <h2 id="mes-titulo" th:text="${tituloMes}">Novembro de 2026</h2>
+      <a class="btn pequeno" th:href="@{/calendario(mes=${mesSeguinte})}" aria-label="Próximo mês">Próximo ›</a>
+    </div>
+    <p class="aviso-conflito" th:if="${haConflito}" role="status">
+      <svg class="icone" aria-hidden="true"><use href="#i-alerta"/></svg>
+      Há eventos em conflito de horário neste mês. Eles aparecem marcados em vermelho.
+    </p>
+    <div class="cal" role="grid" aria-labelledby="mes-titulo">
+      <div class="cal-semana cal-cab" role="row">
+        <div role="columnheader">Dom</div><div role="columnheader">Seg</div><div role="columnheader">Ter</div>
+        <div role="columnheader">Qua</div><div role="columnheader">Qui</div><div role="columnheader">Sex</div><div role="columnheader">Sáb</div>
+      </div>
+      <div class="cal-semana" role="row" th:each="semana : ${semanas}">
+        <div class="cal-dia" role="gridcell" th:each="dia : ${semana}"
+             th:classappend="${!dia.doMes} ? 'fora'" th:attr="data-dia=${dia.data}">
+          <span class="cal-num" th:classappend="${dia.hoje} ? 'hoje'" th:text="${dia.data.dayOfMonth}">1</span>
+          <a class="cal-ev" th:each="e : ${dia.eventos}" th:classappend="${e.emConflito} ? 'conflito'"
+             th:href="@{/eventos/{id}/editar(id=${e.id})}"
+             th:title="${e.titulo} + ' — ' + ${e.areaNome}">
+            <span th:text="${#temporals.format(e.inicio, 'HH:mm')}">10:00</span>
+            <span th:text="${e.titulo}">Reunião</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="painel" aria-labelledby="agenda-titulo" style="margin-top:20px">
+    <div class="painel-cab"><h2 id="agenda-titulo">Agenda do mês</h2></div>
+    <ul class="itens" th:if="${!eventosDoMes.isEmpty()}">
+      <li th:each="e : ${eventosDoMes}" th:classappend="${e.emConflito} ? 'atrasada'">
+        <div class="corpo">
+          <a class="titulo" th:href="@{/eventos/{id}/editar(id=${e.id})}" th:text="${e.titulo}">Reunião</a>
+          <div class="meta">
+            <span th:text="${#temporals.format(e.inicio, 'dd/MM/yyyy HH:mm')} + ' – ' + ${#temporals.format(e.fim, 'HH:mm')}">10/11/2026 10:00 – 11:00</span>
+            <a class="area-etiqueta" th:href="@{/areas/{id}(id=${e.areaId})}" th:text="${e.areaNome}">Faculdade</a>
+            <span class="selo atraso" th:if="${e.emConflito}">Conflito de horário</span>
+          </div>
+        </div>
+      </li>
+    </ul>
+    <p class="vazio-lista" th:if="${eventosDoMes.isEmpty()}">Nenhum evento neste mês.</p>
+  </section>
+</main>
+</body>
+</html>

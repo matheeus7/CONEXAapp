@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/casca :: casca('Dashboard', 'dashboard', ~{::conteudo})}">
+<body>
+<main class="principal" id="conteudo" tabindex="-1" th:fragment="conteudo">
+  <div class="cabeca saudacao">
+    <div>
+      <h1 id="titulo-pagina"><span th:text="${saudacao}">Bom dia</span>, <span th:text="${primeiroNome}">Ana</span></h1>
+      <p th:text="${dataLonga}">Quinta-feira, 29 de outubro</p>
+    </div>
+  </div>
+
+  <section class="painel" th:if="${minhasAreas.isEmpty() and compartilhadas.isEmpty()}" aria-labelledby="vazio-titulo">
+    <div class="vazio">
+      <svg class="icone icone-grande" aria-hidden="true"><use href="#i-pasta"/></svg>
+      <h3 id="vazio-titulo">Sua Minha Vida está pronta</h3>
+      <p>Ela é só sua: nada é compartilhado até você decidir. O próximo passo é criar sua primeira Área, como Faculdade, Trabalho ou Casa.</p>
+      <a class="btn primario" th:href="@{/areas/nova}">Criar primeira Área</a>
+    </div>
+  </section>
+
+  <div th:unless="${minhasAreas.isEmpty() and compartilhadas.isEmpty()}">
+    <div class="grade dois">
+      <section class="painel" aria-labelledby="carga-titulo">
+        <div class="painel-cab">
+          <h2 id="carga-titulo">Índice de Carga</h2>
+          <a class="btn pequeno" th:href="@{/radar}">Ver Radar</a>
+        </div>
+        <div class="painel-corpo">
+          <p class="indice-valor"><span th:text="${indice.valor}">0</span><small>/100</small></p>
+          <progress class="indice-barra" max="100" th:value="${indice.valor}" th:attr="aria-label='Índice de Carga ' + ${indice.valor} + ' de 100'"></progress>
+          <p class="fraco" th:if="${indice.itens.isEmpty()}">Nenhuma tarefa ou evento ativo nos próximos 7 dias.</p>
+          <p class="fraco" th:unless="${indice.itens.isEmpty()}" th:text="${indice.itens.size()} + (${indice.itens.size() == 1} ? ' item considerado' : ' itens considerados') + ' nos próximos 7 dias.'">3 itens</p>
+        </div>
+      </section>
+
+      <section class="painel" aria-labelledby="alertas-titulo">
+        <div class="painel-cab"><h2 id="alertas-titulo">Alertas</h2></div>
+        <ul class="itens" th:if="${!alertas.isEmpty()}">
+          <li th:each="a : ${alertas}" th:classappend="${a.tipo.name() == 'TAREFA_ATRASADA'} ? 'atrasada'">
+            <div class="corpo">
+              <a class="titulo" th:href="@{/areas/{id}(id=${a.tarefa.areaId})}" th:text="${a.tarefa.titulo}">Tarefa</a>
+              <div class="meta">
+                <span th:text="${#temporals.format(a.prazo, 'dd/MM/yyyy HH:mm')}">29/10/2026 18:00</span>
+                <span class="selo atraso" th:if="${a.tipo.name() == 'TAREFA_ATRASADA'}">Atrasada</span>
+                <span class="selo atencao" th:if="${a.tipo.name() == 'PRAZO_PROXIMO'}">Menos de 24 h</span>
+              </div>
+            </div>
+          </li>
+        </ul>
+        <p class="vazio-lista" th:if="${alertas.isEmpty()}">Nenhum alerta. Nada atrasado nem vencendo em menos de 24 horas.</p>
+      </section>
+    </div>
+
+    <div class="grade dois" style="margin-top:20px">
+      <section class="painel" aria-labelledby="hoje-titulo">
+        <div class="painel-cab"><h2 id="hoje-titulo">Tarefas de hoje</h2></div>
+        <ul class="itens" th:if="${!hoje.isEmpty()}">
+          <li th:each="t : ${hoje}" th:classappend="${t.atrasada} ? 'atrasada'">
+            <div class="corpo">
+              <a class="titulo" th:href="@{/areas/{id}(id=${t.areaId})}" th:text="${t.titulo}">Tarefa</a>
+              <div class="meta">
+                <span th:text="${#temporals.format(t.prazo, 'HH:mm')}">18:00</span>
+                <span class="selo atraso" th:if="${t.atrasada}">Atrasada</span>
+                <span class="selo" th:classappend="${#strings.toLowerCase(t.prioridade.name())}" th:text="${t.prioridade.rotulo}">Média</span>
+              </div>
+            </div>
+          </li>
+        </ul>
+        <p class="vazio-lista" th:if="${hoje.isEmpty()}">Nenhuma tarefa com prazo para hoje.</p>
+      </section>
+
+      <section class="painel" aria-labelledby="areas-titulo">
+        <div class="painel-cab">
+          <h2 id="areas-titulo">Áreas</h2>
+          <a class="btn pequeno" th:href="@{/areas}">Minha Vida</a>
+        </div>
+        <ul class="lista-areas">
+          <li th:each="a : ${minhasAreas}">
+            <a th:href="@{/areas/{id}(id=${a.id})}"><svg class="icone" aria-hidden="true"><use href="#i-pasta"/></svg><span th:text="${a.nome}">Faculdade</span></a>
+          </li>
+          <li th:each="a : ${compartilhadas}">
+            <a th:href="@{/areas/{id}(id=${a.id})}"><svg class="icone" aria-hidden="true"><use href="#i-pessoas"/></svg><span><span th:text="${a.nome}">Casa</span> <span class="fraco">· compartilhada comigo</span></span></a>
+          </li>
+        </ul>
+      </section>
+    </div>
+  </div>
+</main>
+</body>
+</html>

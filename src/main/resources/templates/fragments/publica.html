@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR" th:fragment="publica(titulo, conteudo)"><head th:replace="~{fragments/comum :: cabeca(${titulo})}"></head>
+<body>
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+  <th:block th:replace="~{fragments/icones :: sprite}"></th:block>
+  <div class="auth">
+    <aside class="auth-lado">
+      <div class="marca" style="padding:0">
+        <span class="marca-sinal"><svg class="icone" aria-hidden="true"><use href="#i-mais"/></svg></span>
+        <span class="marca-nome">CONEXA</span>
+      </div>
+      <div>
+        <h1>Organize sua vida. Conecte quem faz parte dela.</h1>
+        <p>Tudo começa privado. Você divide só a área que fizer sentido, com o nível de acesso que escolher, e retira quando quiser.</p>
+      </div>
+      <ul class="auth-areas" aria-label="Exemplo de áreas">
+        <li style="--fio: var(--fio-1)"><strong>Faculdade</strong><span><svg class="icone" aria-hidden="true"><use href="#i-pessoas"/></svg>compartilhada com 2</span></li>
+        <li style="--fio: var(--fio-2)"><strong>Casa</strong><span><svg class="icone" aria-hidden="true"><use href="#i-cadeado"/></svg>privada</span></li>
+        <li style="--fio: var(--fio-3)"><strong>Trabalho</strong><span><svg class="icone" aria-hidden="true"><use href="#i-cadeado"/></svg>privada</span></li>
+      </ul>
+    </aside>
+    <main class="auth-form" id="conteudo" tabindex="-1" th:replace="${conteudo}">conteúdo</main>
+  </div>
+  <th:block th:replace="~{fragments/comum :: avisos}"></th:block>
+</body>
+</html>

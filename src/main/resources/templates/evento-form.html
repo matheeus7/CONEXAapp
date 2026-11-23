@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/casca :: casca(${evento != null} ? 'Editar evento' : 'Novo evento', 'calendario', ~{::conteudo})}">
+<body>
+<main class="principal" id="conteudo" tabindex="-1" th:fragment="conteudo">
+  <div class="cabeca">
+    <div>
+      <h1 id="titulo-pagina" th:text="${evento != null} ? 'Editar evento' : 'Novo evento'">Novo evento</h1>
+      <p><a th:href="@{/calendario}">← Calendário</a></p>
+    </div>
+  </div>
+  <section class="painel">
+    <div class="painel-corpo">
+      <div class="vazio-lista" th:if="${evento == null and areas.isEmpty()}">
+        Você ainda não tem Áreas. <a th:href="@{/areas/nova}">Crie uma Área</a> para registrar eventos.
+      </div>
+      <form th:unless="${evento == null and areas.isEmpty()}"
+            th:action="${evento != null} ? @{/eventos/{id}(id=${evento.id})} : @{/eventos}"
+            th:object="${eventoForm}" method="post" novalidate>
+        <p class="erro" th:each="e : ${#fields.globalErrors()}" th:text="${e}">Erro</p>
+        <div class="campo">
+          <label for="titulo">Título</label>
+          <input type="text" id="titulo" th:field="*{titulo}" maxlength="120" required autofocus
+                 th:attr="aria-invalid=${#fields.hasErrors('titulo')} ? 'true', aria-describedby=${#fields.hasErrors('titulo')} ? 'erro-titulo'">
+          <p class="erro" id="erro-titulo" th:if="${#fields.hasErrors('titulo')}" th:errors="*{titulo}">Erro</p>
+        </div>
+        <div class="campo" th:if="${evento == null}">
+          <label for="areaId">Área</label>
+          <select id="areaId" th:field="*{areaId}" required
+                  th:attr="aria-invalid=${#fields.hasErrors('areaId')} ? 'true'">
+            <option value="">Escolha a Área…</option>
+            <option th:each="a : ${areas}" th:value="${a.id}" th:text="${a.nome}">Faculdade</option>
+          </select>
+          <p class="erro" th:if="${#fields.hasErrors('areaId')}" th:errors="*{areaId}">Erro</p>
+        </div>
+        <div class="campo" th:if="${evento != null}">
+          <input type="hidden" th:field="*{areaId}">
+          <span class="rotulo">Área</span>
+          <span th:text="${evento.areaNome}">Faculdade</span>
+        </div>
+        <div class="campo">
+          <label for="inicio">Data e hora de início</label>
+          <input type="datetime-local" id="inicio" th:field="*{inicio}" required
+                 th:attr="aria-invalid=${#fields.hasErrors('inicio')} ? 'true', aria-describedby=${#fields.hasErrors('inicio')} ? 'erro-inicio'">
+          <p class="erro" id="erro-inicio" th:if="${#fields.hasErrors('inicio')}" th:errors="*{inicio}">Erro</p>
+        </div>
+        <div class="campo">
+          <label for="duracaoMinutos">Duração (minutos)</label>
+          <input type="number" id="duracaoMinutos" th:field="*{duracaoMinutos}" min="1" max="1440" required
+                 th:attr="aria-invalid=${#fields.hasErrors('duracaoMinutos')} ? 'true', aria-describedby='ajuda-duracao'">
+          <span class="ajuda" id="ajuda-duracao">Entre 1 e 1440 minutos (24 horas). O evento termina no horário de início mais essa duração.</span>
+          <p class="erro" th:if="${#fields.hasErrors('duracaoMinutos')}" th:errors="*{duracaoMinutos}">Erro</p>
+        </div>
+        <div class="acoes">
+          <button class="btn primario" type="submit" data-ocupado="Salvando…">Salvar</button>
+          <a class="btn" th:href="@{/calendario}">Cancelar</a>
+        </div>
+      </form>
+      <form th:if="${evento != null}" th:action="@{/eventos/{id}/excluir(id=${evento.id})}" method="post" style="margin-top:20px">
+        <button class="btn perigo" type="submit">Excluir evento</button>
+      </form>
+    </div>
+  </section>
+</main>
+</body>
+</html>

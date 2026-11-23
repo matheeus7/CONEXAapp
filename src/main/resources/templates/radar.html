@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/casca :: casca('Radar', 'radar', ~{::conteudo})}">
+<body>
+<main class="principal" id="conteudo" tabindex="-1" th:fragment="conteudo">
+  <div class="cabeca">
+    <div>
+      <h1 id="titulo-pagina">Radar</h1>
+      <p>Um resumo das suas responsabilidades dos próximos 7 dias.</p>
+    </div>
+  </div>
+
+  <div class="grade dois">
+    <section class="painel" aria-labelledby="indice-titulo">
+      <div class="painel-cab"><h2 id="indice-titulo">Índice de Carga</h2></div>
+      <div class="painel-corpo">
+        <p class="indice-valor"><span th:text="${indice.valor}">0</span><small>/100</small></p>
+        <progress class="indice-barra" max="100" th:value="${indice.valor}" th:attr="aria-label='Índice de Carga ' + ${indice.valor} + ' de 100'"></progress>
+        <p class="fraco" th:if="${indice.itens.isEmpty()}">Nenhuma tarefa ou evento ativo nos próximos 7 dias.</p>
+        <p class="fraco" th:unless="${indice.itens.isEmpty()}"
+           th:text="${indice.somaPontos} + ' pontos × fator ' + ${indice.fatorEscala} + ' = ' + ${indice.somaPontos * indice.fatorEscala} + (${indice.somaPontos * indice.fatorEscala > 100} ? ', limitado a 100' : '')">12 pontos</p>
+        <p class="fraco" style="margin-top:10px">Este número resume tarefas e eventos a partir de uma regra de pontos. Ele não é uma avaliação médica, psicológica ou clínica.</p>
+      </div>
+    </section>
+
+    <section class="painel" aria-labelledby="como-titulo">
+      <div class="painel-cab"><h2 id="como-titulo">Como o número é calculado</h2></div>
+      <div class="painel-corpo">
+        <p>Entram as tarefas pendentes sob sua responsabilidade, atrasadas ou com prazo nos próximos 7 dias, e os eventos dos próximos 7 dias das Áreas em que você pode editar.</p>
+        <ul style="margin:8px 0 0 20px">
+          <li>Prioridade: Alta 3, Média 2, Baixa 1 (eventos contam como Média).</li>
+          <li>Urgência: vencida +2; vence em até 2 dias +1; demais +0.</li>
+          <li>Conflitos de horário aparecem à parte e não mudam o número.</li>
+        </ul>
+      </div>
+    </section>
+  </div>
+
+  <section class="painel" aria-labelledby="itens-titulo" style="margin-top:20px">
+    <div class="painel-cab"><h2 id="itens-titulo">O que compõe o índice</h2></div>
+    <table class="tab" th:if="${!indice.itens.isEmpty()}">
+      <thead><tr><th scope="col">Item</th><th scope="col">Quando</th><th scope="col">Prioridade</th><th scope="col">Urgência</th><th scope="col">Pontos</th></tr></thead>
+      <tbody>
+        <tr th:each="i : ${indice.itens}">
+          <td><span class="selo" th:text="${i.tipo}">Tarefa</span> <span th:text="${i.titulo}">Entregar</span></td>
+          <td th:text="${#temporals.format(i.quando, 'dd/MM/yyyy HH:mm')}">29/10/2026 18:00</td>
+          <td th:text="${i.pontosPrioridade}">3</td>
+          <td th:text="${i.pontosUrgencia}">2</td>
+          <td th:text="${i.total}">5</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="vazio-lista" th:if="${indice.itens.isEmpty()}">Nada ativo nos próximos 7 dias.</p>
+  </section>
+
+  <div class="grade dois" style="margin-top:20px">
+    <section class="painel" aria-labelledby="atrasadas-titulo">
+      <div class="painel-cab"><h2 id="atrasadas-titulo">Tarefas atrasadas</h2></div>
+      <ul class="itens" th:if="${!atrasadas.isEmpty()}">
+        <li class="atrasada" th:each="t : ${atrasadas}">
+          <div class="corpo">
+            <a class="titulo" th:href="@{/areas/{id}(id=${t.areaId})}" th:text="${t.titulo}">Tarefa</a>
+            <div class="meta"><span th:text="${#temporals.format(t.prazo, 'dd/MM/yyyy HH:mm')}">29/10/2026</span><span class="selo atraso">Atrasada</span></div>
+          </div>
+        </li>
+      </ul>
+      <p class="vazio-lista" th:if="${atrasadas.isEmpty()}">Nenhuma tarefa atrasada.</p>
+    </section>
+    <section class="painel" aria-labelledby="conflitos-titulo">
+      <div class="painel-cab"><h2 id="conflitos-titulo">Conflitos de horário</h2></div>
+      <ul class="itens" th:if="${!conflitos.isEmpty()}">
+        <li class="atrasada" th:each="e : ${conflitos}">
+          <div class="corpo">
+            <a class="titulo" th:href="@{/eventos/{id}/editar(id=${e.id})}" th:text="${e.titulo}">Evento</a>
+            <div class="meta">
+              <span th:text="${#temporals.format(e.inicio, 'dd/MM/yyyy HH:mm')} + ' – ' + ${#temporals.format(e.fim, 'HH:mm')}">29/10/2026 10:00 – 11:00</span>
+              <span th:text="${e.areaNome}">Faculdade</span>
+            </div>
+          </div>
+        </li>
+      </ul>
+      <p class="vazio-lista" th:if="${conflitos.isEmpty()}">Nenhum conflito de horário nos próximos 7 dias.</p>
+    </section>
+  </div>
+</main>
+</body>
+</html>
