@@ -204,4 +204,24 @@ class TarefaServiceTest {
 
         verify(tarefas).devolverAoDono(AREA, BRUNO, ANA);
     }
+    @Test
+    @DisplayName("CT-024 tarefa concluída com prazo de ontem não é atrasada")
+    void concluidaNaoEAtrasada() {
+        Tarefa t = tarefaDaAna(AGORA.minusDays(1));
+        t.concluir(ANA, AGORA);
+        assertThat(t.estaAtrasada(AGORA)).isFalse();
+    }
+
+    @Test
+    @DisplayName("CT-025 Davi, sem conexão com a Área Casa, não cria tarefa nela")
+    void daviSemAcessoACasa() {
+        Long davi = 3L;
+        Long casaId = 200L;
+        AreaResumo casa = new AreaResumo(casaId, "Casa", ANA, AGORA.minusDays(5));
+        when(areas.buscar(davi, casaId)).thenReturn(casa);
+
+        assertThatThrownBy(() -> servico.criar(davi, casaId, dados("Lavar louça", AGORA.plusDays(1))))
+                .isInstanceOf(AcessoNegadoException.class);
+        verify(tarefas, never()).save(any());
+    }
 }
